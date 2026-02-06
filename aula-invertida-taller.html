@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taller: Aula Invertida - Aprende Haciendo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #f0f0f0;
+    }
+
+    #root {
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .progress-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .nav-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      color: #f0f0f0;
+      font-family: inherit;
+    }
+
+    .nav-step:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+
+    .nav-step.active {
+      background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+      border-color: transparent;
+      box-shadow: 0 4px 20px rgba(233, 69, 96, 0.4);
+    }
+
+    .nav-step.completed {
+      background: rgba(0, 206, 158, 0.2);
+      border-color: #00ce9e;
+    }
+
+    .nav-step .step-icon {
+      font-size: 18px;
+    }
+
+    .phase-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.03);
+      border-radius: 24px;
+      padding: 40px;
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      min-height: 500px;
+    }
+
+    .phase-content h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #fff 0%, #a0a0a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .phase-intro {
+      text-align: center;
+      color: #b0b0b0;
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .phase-intro strong {
+      color: #e94560;
+    }
+
+    .welcome-card {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .welcome-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .lead {
+      font-size: 1.3rem;
+      color: #b0b0b0;
+      margin-bottom: 30px;
+    }
+
+    .what-youll-do {
+      background: rgba(233, 69, 96, 0.1);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 30px auto;
+      max-width: 500px;
+    }
+
+    .what-youll-do h3 {
+      margin-bottom: 20px;
+      color: #e94560;
+    }
+
+    .do-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .do-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+    }
+
+    .do-icon {
+      font-size: 1.5rem;
+    }
+
+    .time-estimate {
+      margin-top: 30px;
+      color: #888;
+      font-size: 0.95rem;
+    }
+
+    .comparison-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 30px 0;
+    }
+
+    .comparison-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 24px;
+      width: 280px;
+      border: 2px solid rgba(255,255,255,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .comparison-card.flipped {
+      border-color: #00ce9e;
+      background: rgba(0, 206, 158, 0.08);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .card-header h3 {
+      font-size: 1.1rem;
+    }
+
+    .card-icon {
+      font-size: 2rem;
+    }
+
+    .flow-diagram {
+      text-align: center;
+    }
+
+    .flow-step {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 8px 0;
+    }
+
+    .flow-step.highlight {
+      background: rgba(0, 206, 158, 0.15);
+    }
+
+    .flow-step span {
+      display: block;
+    }
+
+    .step-icon {
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+    }
+
+    .step-label {
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    .step-action {
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .flow-arrow {
+      font-size: 1.5rem;
+      color: #666;
+    }
+
+    .card-insight {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+
+    .card-insight.negative {
+      background: rgba(255, 107, 107, 0.15);
+      color: #ff6b6b;
+    }
+
+    .card-insight.positive {
+      background: rgba(0, 206, 158, 0.15);
+      color: #00ce9e;
+    }
+
+    .vs-badge {
+      background: linear-gradient(135deg, #e94560, #ff6b6b);
+      color: white;
+      font-weight: 800;
+      padding: 15px;
+      border-radius: 50%;
+      font-size: 1rem;
+    }
+
+    .key-principle {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(233, 69, 96, 0.1);
+      border-left: 4px solid #e94560;
+      padding: 20px;
+      border-radius: 0 12px 12px 0;
+      margin-top: 30px;
+    }
+
+    .principle-icon {
+      font-size: 2.5rem;
+    }
+
+    .principle-text {
+      line-height: 1.6;
+    }
+
+    .activity-explorer {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .activity-card.explore {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .activity-card.explore:hover {
+      background: rgba(255,255,255,0.08);
+      transform: translateY(-2px);
+    }
+
+    .activity-card.explore.active {
+      border-color: #e94560;
+      background: rgba(233, 69, 96, 0.1);
+    }
+
+    .activity-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .activity-icon {
+      font-size: 1.5rem;
+    }
+
+    .activity-tip {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+      color: #b0b0b0;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .best-practices, .class-structure {
+      background: rgba(0, 206, 158, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 30px;
+    }
+
+    .best-practices h3, .class-structure h3 {
+      color: #00ce9e;
+      margin-bottom: 16px;
+    }
+
+    .best-practices ul {
+      list-style: none;
+    }
+
+    .best-practices li {
+      padding: 8px 0;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .best-practices li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #00ce9e;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+    }
+
+    .timeline-item.main {
+      background: rgba(233, 69, 96, 0.15);
+      border-left: 3px solid #e94560;
+    }
+
+    .timeline-item .time {
+      font-weight: 700;
+      color: #e94560;
+      min-width: 60px;
+    }
+
+    .design-workspace {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .lesson-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      color: #e94560;
+    }
+
+    .input-group input, .input-group textarea {
+      padding: 14px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .input-group input:focus, .input-group textarea:focus {
+      outline: none;
+      border-color: #e94560;
+      background: rgba(233, 69, 96, 0.1);
+    }
+
+    .input-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .activity-palette {
+      background: rgba(255,255,255,0.03);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px dashed rgba(255,255,255,0.15);
+    }
+
+    .activity-palette h3 {
+      margin-bottom: 8px;
+    }
+
+    .palette-hint {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    .palette-section {
+      margin-bottom: 16px;
+    }
+
+    .palette-label {
+      display: block;
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .palette-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .palette-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 20px;
+      cursor: grab;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .palette-item.before {
+      background: rgba(255, 193, 7, 0.2);
+      border: 1px solid rgba(255, 193, 7, 0.4);
+    }
+
+    .palette-item.during {
+      background: rgba(0, 206, 158, 0.2);
+      border: 1px solid rgba(0, 206, 158, 0.4);
+    }
+
+    .palette-item:hover {
+      transform: scale(1.05);
+    }
+
+    .palette-item:active {
+      cursor: grabbing;
+    }
+
+    .item-label {
+      white-space: nowrap;
+    }
+
+    .drop-zones {
+      display: flex;
+      align-items: stretch;
+      gap: 16px;
+    }
+
+    .zone-arrow {
+      display: flex;
+      align-items: center;
+      font-size: 2rem;
+      color: #666;
+    }
+
+    .drop-zone {
+      flex: 1;
+      min-height: 180px;
+      border: 2px dashed rgba(255,255,255,0.2);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .drop-zone h4 {
+      margin-bottom: 12px;
+    }
+
+    .drop-zone.before {
+      background: rgba(255, 193, 7, 0.05);
+    }
+
+    .drop-zone.during {
+      background: rgba(0, 206, 158, 0.05);
+    }
+
+    .drop-zone.active {
+      border-color: #e94560;
+      background: rgba(233, 69, 96, 0.1);
+      transform: scale(1.02);
+    }
+
+    .drop-hint {
+      color: #666;
+      font-style: italic;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .dropped-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dropped-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .dropped-item button {
+      background: rgba(255, 107, 107, 0.3);
+      border: none;
+      color: #ff6b6b;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .dropped-item button:hover {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .final-plan {
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .plan-header {
+      background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+      padding: 30px;
+      text-align: center;
+    }
+
+    .plan-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .plan-header h3 {
+      font-size: 1.8rem;
+      margin-bottom: 4px;
+    }
+
+    .plan-subject {
+      opacity: 0.8;
+    }
+
+    .plan-section {
+      padding: 20px 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .plan-section h4 {
+      color: #e94560;
+      margin-bottom: 8px;
+    }
+
+    .plan-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .plan-column {
+      padding: 24px;
+      background: #1a1a2e;
+    }
+
+    .plan-column.before {
+      background: rgba(255, 193, 7, 0.05);
+    }
+
+    .plan-column.during {
+      background: rgba(0, 206, 158, 0.05);
+    }
+
+    .plan-column h4 {
+      margin-bottom: 8px;
+    }
+
+    .column-subtitle {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    .plan-column ul {
+      list-style: none;
+    }
+
+    .plan-column li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .empty-notice {
+      color: #666;
+      font-style: italic;
+    }
+
+    .plan-tips {
+      padding: 24px 30px;
+      background: rgba(233, 69, 96, 0.08);
+    }
+
+    .plan-tips h4 {
+      color: #e94560;
+      margin-bottom: 16px;
+    }
+
+    .plan-tips ul {
+      list-style: none;
+    }
+
+    .plan-tips li {
+      padding: 8px 0;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .plan-tips li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #e94560;
+    }
+
+    .completion-message {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 24px 30px;
+      background: linear-gradient(135deg, rgba(0, 206, 158, 0.15) 0%, rgba(0, 206, 158, 0.05) 100%);
+    }
+
+    .completion-icon {
+      font-size: 3rem;
+    }
+
+    .completion-message strong {
+      display: block;
+      color: #00ce9e;
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .nav-btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 30px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn.prev {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .nav-btn.prev:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .nav-btn.next {
+      background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+      color: white;
+    }
+
+    .nav-btn.next:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      .phase-container {
+        padding: 24px;
+      }
+
+      .comparison-container {
+        flex-direction: column;
+      }
+
+      .comparison-card {
+        width: 100%;
+      }
+
+      .vs-badge {
+        padding: 10px;
+      }
+
+      .lesson-info {
+        grid-template-columns: 1fr;
+      }
+
+      .drop-zones {
+        flex-direction: column;
+      }
+
+      .zone-arrow {
+        transform: rotate(90deg);
+        justify-content: center;
+      }
+
+      .plan-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .do-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const phases = [
+      { id: 'intro', title: 'Bienvenida', icon: '🎯' },
+      { id: 'concept', title: 'El Modelo', icon: '💡' },
+      { id: 'before', title: 'Antes de Clase', icon: '🏠' },
+      { id: 'during', title: 'Durante la Clase', icon: '🏫' },
+      { id: 'practice', title: 'Tu Diseño', icon: '✏️' },
+      { id: 'review', title: 'Revisión', icon: '🎉' }
+    ];
+
+    const activities = [
+      { id: 'video', label: 'Video explicativo', icon: '🎬', type: 'before' },
+      { id: 'reading', label: 'Lectura guiada', icon: '📖', type: 'before' },
+      { id: 'podcast', label: 'Podcast o audio', icon: '🎧', type: 'before' },
+      { id: 'infographic', label: 'Infografía interactiva', icon: '📊', type: 'before' },
+      { id: 'quiz_pre', label: 'Quiz de preparación', icon: '❓', type: 'before' },
+      { id: 'debate', label: 'Debate en grupos', icon: '💬', type: 'during' },
+      { id: 'project', label: 'Proyecto colaborativo', icon: '🛠️', type: 'during' },
+      { id: 'case_study', label: 'Estudio de caso', icon: '🔍', type: 'during' },
+      { id: 'roleplay', label: 'Juego de roles', icon: '🎭', type: 'during' },
+      { id: 'lab', label: 'Práctica en laboratorio', icon: '🧪', type: 'during' },
+      { id: 'peer', label: 'Enseñanza entre pares', icon: '👥', type: 'during' },
+      { id: 'problem', label: 'Resolución de problemas', icon: '🧩', type: 'during' },
+    ];
+
+    function AulaInvertidaWorkshop() {
+      const [currentPhase, setCurrentPhase] = useState(0);
+      const [lessonData, setLessonData] = useState({
+        subject: '',
+        topic: '',
+        objective: '',
+        beforeActivities: [],
+        duringActivities: [],
+        assessment: ''
+      });
+      const [draggedItem, setDraggedItem] = useState(null);
+      const [showTip, setShowTip] = useState(null);
+      const [completedSteps, setCompletedSteps] = useState([]);
+
+      const tips = {
+        video: 'Máximo 10-15 minutos. Incluye preguntas de reflexión al final.',
+        reading: 'Proporciona guía de lectura con preguntas clave.',
+        podcast: 'Ideal para contenido narrativo o entrevistas con expertos.',
+        infographic: 'Perfecta para procesos, comparaciones o datos.',
+        quiz_pre: 'Ayuda a identificar conceptos previos y dudas.',
+        debate: 'Prepara roles y reglas claras. Modera activamente.',
+        project: 'Define entregables claros y checkpoints.',
+        case_study: 'Casos reales aumentan el engagement.',
+        roleplay: 'Excelente para habilidades blandas y empatía.',
+        lab: 'Asegura que todos tengan acceso a materiales.',
+        peer: 'Los estudiantes aprenden enseñando.',
+        problem: 'Problemas auténticos motivan más.'
+      };
+
+      const handleDragStart = (activity) => {
+        setDraggedItem(activity);
+      };
+
+      const handleDrop = (zone) => {
+        if (draggedItem) {
+          if (zone === 'before' && draggedItem.type === 'before') {
+            if (!lessonData.beforeActivities.find(a => a.id === draggedItem.id)) {
+              setLessonData(prev => ({
+                ...prev,
+                beforeActivities: [...prev.beforeActivities, draggedItem]
+              }));
+            }
+          } else if (zone === 'during' && draggedItem.type === 'during') {
+            if (!lessonData.duringActivities.find(a => a.id === draggedItem.id)) {
+              setLessonData(prev => ({
+                ...prev,
+                duringActivities: [...prev.duringActivities, draggedItem]
+              }));
+            }
+          }
+          setDraggedItem(null);
+        }
+      };
+
+      const removeActivity = (zone, activityId) => {
+        if (zone === 'before') {
+          setLessonData(prev => ({
+            ...prev,
+            beforeActivities: prev.beforeActivities.filter(a => a.id !== activityId)
+          }));
+        } else {
+          setLessonData(prev => ({
+            ...prev,
+            duringActivities: prev.duringActivities.filter(a => a.id !== activityId)
+          }));
+        }
+      };
+
+      const markComplete = () => {
+        if (!completedSteps.includes(currentPhase)) {
+          setCompletedSteps([...completedSteps, currentPhase]);
+        }
+      };
+
+      const canProceed = () => {
+        if (currentPhase === 4) {
+          return lessonData.subject && lessonData.topic && 
+                 lessonData.beforeActivities.length > 0 && 
+                 lessonData.duringActivities.length > 0;
+        }
+        return true;
+      };
+
+      const renderPhase = () => {
+        switch(phases[currentPhase].id) {
+          case 'intro':
+            return (
+              <div className="phase-content intro-phase">
+                <div className="welcome-card">
+                  <div className="welcome-icon">🚀</div>
+                  <h2>¡Bienvenido/a al Taller de Aula Invertida!</h2>
+                  <p className="lead">Aprenderás diseñando tu propia clase invertida, paso a paso.</p>
+                  <div className="what-youll-do">
+                    <h3>En este taller vas a:</h3>
+                    <div className="do-grid">
+                      <div className="do-item">
+                        <span className="do-icon">🧠</span>
+                        <span>Comprender el modelo</span>
+                      </div>
+                      <div className="do-item">
+                        <span className="do-icon">🎨</span>
+                        <span>Diseñar actividades</span>
+                      </div>
+                      <div className="do-item">
+                        <span className="do-icon">🔧</span>
+                        <span>Crear tu clase</span>
+                      </div>
+                      <div className="do-item">
+                        <span className="do-icon">✅</span>
+                        <span>Obtener tu plan</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="time-estimate">⏱️ Tiempo estimado: 15-20 minutos</p>
+                </div>
+              </div>
+            );
+
+          case 'concept':
+            return (
+              <div className="phase-content concept-phase">
+                <h2>¿Qué es el Aula Invertida?</h2>
+                <div className="comparison-container">
+                  <div className="comparison-card traditional">
+                    <div className="card-header">
+                      <span className="card-icon">📚</span>
+                      <h3>Clase Tradicional</h3>
+                    </div>
+                    <div className="flow-diagram">
+                      <div className="flow-step">
+                        <span className="step-icon">🏫</span>
+                        <span className="step-label">En clase</span>
+                        <span className="step-action">Profesor explica</span>
+                      </div>
+                      <div className="flow-arrow">↓</div>
+                      <div className="flow-step">
+                        <span className="step-icon">🏠</span>
+                        <span className="step-label">En casa</span>
+                        <span className="step-action">Estudiante practica solo</span>
+                      </div>
+                    </div>
+                    <div className="card-insight negative">
+                      😕 Dudas surgen cuando el profesor no está
+                    </div>
+                  </div>
+
+                  <div className="vs-badge">VS</div>
+
+                  <div className="comparison-card flipped">
+                    <div className="card-header">
+                      <span className="card-icon">🔄</span>
+                      <h3>Aula Invertida</h3>
+                    </div>
+                    <div className="flow-diagram">
+                      <div className="flow-step highlight">
+                        <span className="step-icon">🏠</span>
+                        <span className="step-label">En casa</span>
+                        <span className="step-action">Estudiante aprende contenido</span>
+                      </div>
+                      <div className="flow-arrow">↓</div>
+                      <div className="flow-step highlight">
+                        <span className="step-icon">🏫</span>
+                        <span className="step-label">En clase</span>
+                        <span className="step-action">Práctica con apoyo del profesor</span>
+                      </div>
+                    </div>
+                    <div className="card-insight positive">
+                      ✨ El profesor guía cuando más se necesita
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="key-principle">
+                  <div className="principle-icon">💡</div>
+                  <div className="principle-text">
+                    <strong>Principio clave:</strong> El tiempo presencial se usa para lo que más valor aporta: 
+                    resolver dudas, profundizar y aplicar conocimientos con guía experta.
+                  </div>
+                </div>
+              </div>
+            );
+
+          case 'before':
+            return (
+              <div className="phase-content before-phase">
+                <h2>🏠 Fase 1: Antes de la Clase</h2>
+                <p className="phase-intro">
+                  El estudiante se prepara en casa con materiales que tú diseñas. 
+                  <strong> Haz clic en cada tarjeta</strong> para ver consejos.
+                </p>
+                
+                <div className="activity-explorer">
+                  {activities.filter(a => a.type === 'before').map(activity => (
+                    <div 
+                      key={activity.id} 
+                      className={`activity-card explore ${showTip === activity.id ? 'active' : ''}`}
+                      onClick={() => setShowTip(showTip === activity.id ? null : activity.id)}
+                    >
+                      <div className="activity-main">
+                        <span className="activity-icon">{activity.icon}</span>
+                        <span className="activity-label">{activity.label}</span>
+                      </div>
+                      {showTip === activity.id && (
+                        <div className="activity-tip">
+                          💡 {tips[activity.id]}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="best-practices">
+                  <h3>📋 Mejores Prácticas</h3>
+                  <ul>
+                    <li>Videos cortos (máx. 15 min) con pausas para reflexión</li>
+                    <li>Incluye una actividad de verificación (quiz, preguntas)</li>
+                    <li>Proporciona recursos adicionales para quien quiera profundizar</li>
+                    <li>Deja claro qué deben traer preparado a clase</li>
+                  </ul>
+                </div>
+              </div>
+            );
+
+          case 'during':
+            return (
+              <div className="phase-content during-phase">
+                <h2>🏫 Fase 2: Durante la Clase</h2>
+                <p className="phase-intro">
+                  Aquí es donde ocurre la magia. El tiempo presencial se aprovecha para actividades de alto valor.
+                  <strong> Explora las opciones:</strong>
+                </p>
+                
+                <div className="activity-explorer during">
+                  {activities.filter(a => a.type === 'during').map(activity => (
+                    <div 
+                      key={activity.id} 
+                      className={`activity-card explore ${showTip === activity.id ? 'active' : ''}`}
+                      onClick={() => setShowTip(showTip === activity.id ? null : activity.id)}
+                    >
+                      <div className="activity-main">
+                        <span className="activity-icon">{activity.icon}</span>
+                        <span className="activity-label">{activity.label}</span>
+                      </div>
+                      {showTip === activity.id && (
+                        <div className="activity-tip">
+                          💡 {tips[activity.id]}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="class-structure">
+                  <h3>⏰ Estructura Sugerida de Clase (50 min)</h3>
+                  <div className="timeline">
+                    <div className="timeline-item">
+                      <span className="time">5 min</span>
+                      <span className="activity">Clarificar dudas del material previo</span>
+                    </div>
+                    <div className="timeline-item main">
+                      <span className="time">35 min</span>
+                      <span className="activity">Actividad práctica principal</span>
+                    </div>
+                    <div className="timeline-item">
+                      <span className="time">10 min</span>
+                      <span className="activity">Síntesis y conexión con siguiente tema</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+
+          case 'practice':
+            return (
+              <div className="phase-content practice-phase">
+                <h2>✏️ ¡Diseña Tu Clase Invertida!</h2>
+                <p className="phase-intro">
+                  Ahora es tu turno. Completa los campos y <strong>arrastra las actividades</strong> a cada zona.
+                </p>
+
+                <div className="design-workspace">
+                  <div className="lesson-info">
+                    <div className="input-group">
+                      <label>📚 Asignatura</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Matemáticas, Historia, Biología..."
+                        value={lessonData.subject}
+                        onChange={(e) => setLessonData({...lessonData, subject: e.target.value})}
+                      />
+                    </div>
+                    <div className="input-group">
+                      <label>📝 Tema específico</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Ecuaciones cuadráticas, La Revolución Francesa..."
+                        value={lessonData.topic}
+                        onChange={(e) => setLessonData({...lessonData, topic: e.target.value})}
+                      />
+                    </div>
+                    <div className="input-group full">
+                      <label>🎯 Objetivo de aprendizaje</label>
+                      <textarea
+                        placeholder="Al finalizar, el estudiante será capaz de..."
+                        value={lessonData.objective}
+                        onChange={(e) => setLessonData({...lessonData, objective: e.target.value})}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="activity-palette">
+                    <h3>🎨 Paleta de Actividades</h3>
+                    <p className="palette-hint">Arrastra al área correspondiente ↓</p>
+                    <div className="palette-section">
+                      <span className="palette-label">Para casa:</span>
+                      <div className="palette-items">
+                        {activities.filter(a => a.type === 'before').map(activity => (
+                          <div
+                            key={activity.id}
+                            className="palette-item before"
+                            draggable
+                            onDragStart={() => handleDragStart(activity)}
+                          >
+                            <span>{activity.icon}</span>
+                            <span className="item-label">{activity.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="palette-section">
+                      <span className="palette-label">Para clase:</span>
+                      <div className="palette-items">
+                        {activities.filter(a => a.type === 'during').map(activity => (
+                          <div
+                            key={activity.id}
+                            className="palette-item during"
+                            draggable
+                            onDragStart={() => handleDragStart(activity)}
+                          >
+                            <span>{activity.icon}</span>
+                            <span className="item-label">{activity.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="drop-zones">
+                    <div
+                      className={`drop-zone before ${draggedItem?.type === 'before' ? 'active' : ''}`}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={() => handleDrop('before')}
+                    >
+                      <h4>🏠 Antes de Clase</h4>
+                      {lessonData.beforeActivities.length === 0 ? (
+                        <p className="drop-hint">Arrastra actividades aquí</p>
+                      ) : (
+                        <div className="dropped-items">
+                          {lessonData.beforeActivities.map(activity => (
+                            <div key={activity.id} className="dropped-item">
+                              <span>{activity.icon} {activity.label}</span>
+                              <button onClick={() => removeActivity('before', activity.id)}>×</button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="zone-arrow">→</div>
+
+                    <div
+                      className={`drop-zone during ${draggedItem?.type === 'during' ? 'active' : ''}`}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={() => handleDrop('during')}
+                    >
+                      <h4>🏫 Durante la Clase</h4>
+                      {lessonData.duringActivities.length === 0 ? (
+                        <p className="drop-hint">Arrastra actividades aquí</p>
+                      ) : (
+                        <div className="dropped-items">
+                          {lessonData.duringActivities.map(activity => (
+                            <div key={activity.id} className="dropped-item">
+                              <span>{activity.icon} {activity.label}</span>
+                              <button onClick={() => removeActivity('during', activity.id)}>×</button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+
+          case 'review':
+            return (
+              <div className="phase-content review-phase">
+                <h2>🎉 ¡Tu Plan de Aula Invertida!</h2>
+                
+                <div className="final-plan">
+                  <div className="plan-header">
+                    <div className="plan-badge">PLAN COMPLETO</div>
+                    <h3>{lessonData.topic || 'Tu Clase'}</h3>
+                    <p className="plan-subject">{lessonData.subject || 'Asignatura'}</p>
+                  </div>
+
+                  {lessonData.objective && (
+                    <div className="plan-section objective">
+                      <h4>🎯 Objetivo</h4>
+                      <p>{lessonData.objective}</p>
+                    </div>
+                  )}
+
+                  <div className="plan-columns">
+                    <div className="plan-column before">
+                      <h4>🏠 Trabajo en Casa</h4>
+                      <p className="column-subtitle">El estudiante se prepara con:</p>
+                      {lessonData.beforeActivities.length > 0 ? (
+                        <ul>
+                          {lessonData.beforeActivities.map(a => (
+                            <li key={a.id}>{a.icon} {a.label}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="empty-notice">Sin actividades seleccionadas</p>
+                      )}
+                    </div>
+
+                    <div className="plan-column during">
+                      <h4>🏫 Sesión Presencial</h4>
+                      <p className="column-subtitle">En clase trabajamos con:</p>
+                      {lessonData.duringActivities.length > 0 ? (
+                        <ul>
+                          {lessonData.duringActivities.map(a => (
+                            <li key={a.id}>{a.icon} {a.label}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="empty-notice">Sin actividades seleccionadas</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="plan-tips">
+                    <h4>💡 Recomendaciones para tu clase</h4>
+                    <ul>
+                      <li>Envía el material con al menos 48h de anticipación</li>
+                      <li>Incluye una actividad de verificación antes de la clase</li>
+                      <li>Ten un plan B para quienes no se prepararon</li>
+                      <li>Recoge feedback para mejorar iterativamente</li>
+                    </ul>
+                  </div>
+
+                  <div className="completion-message">
+                    <span className="completion-icon">🏆</span>
+                    <div>
+                      <strong>¡Felicitaciones!</strong>
+                      <p>Has diseñado tu primera clase invertida. Ahora es momento de implementarla y ajustar según la experiencia.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+
+          default:
+            return null;
+        }
+      };
+
+      return (
+        <div>
+          <nav className="progress-nav">
+            {phases.map((phase, index) => (
+              <button
+                key={phase.id}
+                className={`nav-step ${currentPhase === index ? 'active' : ''} ${completedSteps.includes(index) ? 'completed' : ''}`}
+                onClick={() => setCurrentPhase(index)}
+              >
+                <span className="step-icon">{phase.icon}</span>
+                <span>{phase.title}</span>
+              </button>
+            ))}
+          </nav>
+
+          <div className="phase-container">
+            {renderPhase()}
+
+            <div className="nav-buttons">
+              <button
+                className="nav-btn prev"
+                onClick={() => {
+                  markComplete();
+                  setCurrentPhase(Math.max(0, currentPhase - 1));
+                }}
+                disabled={currentPhase === 0}
+              >
+                ← Anterior
+              </button>
+              <button
+                className="nav-btn next"
+                onClick={() => {
+                  markComplete();
+                  setCurrentPhase(Math.min(phases.length - 1, currentPhase + 1));
+                }}
+                disabled={currentPhase === phases.length - 1 || !canProceed()}
+              >
+                {currentPhase === phases.length - 2 ? 'Ver mi plan' : 'Siguiente'} →
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<AulaInvertidaWorkshop />);
+  </script>
+</body>
+</html>
